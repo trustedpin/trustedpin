@@ -7,6 +7,8 @@ import Auth from './pages/Auth'
 import Terms from './pages/Terms'
 import Privacy from './pages/Privacy'
 import Pro from './pages/Pro'
+import About from './pages/About'
+import HowItWorks from './pages/HowItWorks'
 import Nav from './components/Nav'
 import './App.css'
 
@@ -50,11 +52,14 @@ export default function App() {
       <Nav page={page} navigate={navigate} user={user} pinsCount={pins.length} />
       {page === 'home' && <Home navigate={navigate} />}
       {page === 'results' && <Results navigate={navigate} searchData={searchData} user={user} pins={pins} onPin={handlePin} />}
-      {page === 'pins' && <Pins navigate={navigate} user={user} pins={pins} onClear={clearPins} />}
+      {page === 'pins' && <Pins navigate={navigate} user={user} pins={pins} onClear={clearPins} onPin={handlePin} />}
       {page === 'auth' && <Auth navigate={navigate} />}
       {page === 'terms' && <Terms navigate={navigate} />}
       {page === 'privacy' && <Privacy navigate={navigate} />}
       {page === 'pro' && <Pro navigate={navigate} />}
+      {page === 'about' && <About navigate={navigate} />}
+      {page === 'how' && <HowItWorks navigate={navigate} />}
     </div>
   )
 }
+

@@ -1,6 +1,3 @@
-import { useState, useEffect } from 'react'
-import { supabase } from '../supabase'
-
 const ICONS = {
   Plumbing:'🔧',Electrical:'⚡',HVAC:'❄️',Roofing:'🏠',
   Landscaping:'🌿',Painting:'🖌️','Pest Control':'🐛',
@@ -8,91 +5,68 @@ const ICONS = {
   'Interior Remodeling':'🏗️','Interior Design':'🪑'
 }
 
-export default function Pins({ navigate, user, pins, onClear }) {
-  const grouped = pins.reduce((acc, item) => {
-    if (!acc[item.service]) acc[item.service] = []
-    acc[item.service].push(item)
-    return acc
-  }, {})
-
-  const s = {
-    page: {background:'#0A0A0F',minHeight:'100vh'},
-    wrap: {maxWidth:'680px',margin:'0 auto',padding:'1.75rem 1.5rem'},
-    hd: {display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'1.5rem',flexWrap:'wrap',gap:'1rem'},
-    title: {fontFamily:'Playfair Display,serif',fontSize:'1.1rem',color:'#F0EDE6'},
-    sub: {fontSize:'0.75rem',color:'#5A5548',marginTop:'3px'},
-    clearBtn: {background:'none',border:'1px solid #2A2A3A',borderRadius:'8px',padding:'0.38rem 0.8rem',fontSize:'0.72rem',color:'#9A9080',cursor:'pointer',fontFamily:'DM Sans,sans-serif'},
-    newBtn: {background:'#C9A84C',color:'#0A0A0F',border:'none',borderRadius:'8px',padding:'0.42rem 0.95rem',fontSize:'0.75rem',fontWeight:'700',cursor:'pointer',fontFamily:'DM Sans,sans-serif'},
-    group: {marginBottom:'1.75rem'},
-    groupHd: {display:'flex',alignItems:'center',gap:'8px',paddingBottom:'0.6rem',borderBottom:'1px solid #2A2A3A',marginBottom:'0.85rem'},
-    icon: {width:'26px',height:'26px',borderRadius:'6px',background:'#1C1C28',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.8rem'},
-    groupName: {fontWeight:'700',fontSize:'0.85rem',color:'#F0EDE6'},
-    count: {fontSize:'0.68rem',color:'#5A5548',marginLeft:'auto',background:'#1C1C28',padding:'2px 6px',borderRadius:'100px',border:'1px solid #2A2A3A'},
-    card: {background:'#12121A',border:'1px solid #2A2A3A',borderRadius:'10px',padding:'0.95rem 1.1rem',marginBottom:'0.6rem'},
-    cardTop: {display:'flex',justifyContent:'space-between',gap:'0.75rem',marginBottom:'0.5rem'},
-    name: {fontWeight:'700',fontSize:'0.82rem',color:'#F0EDE6'},
-    loc: {fontSize:'0.7rem',color:'#5A5548'},
-    date: {fontSize:'0.68rem',color:'#5A5548',whiteSpace:'nowrap'},
-    pill: {background:'#1C1C28',color:'#C9A84C',fontSize:'0.62rem',fontWeight:'700',padding:'2px 7px',borderRadius:'100px',border:'1px solid #7A6030'},
-    desc: {fontSize:'0.76rem',color:'#9A9080',lineHeight:'1.5',marginBottom:'0.6rem'},
-    footer: {display:'flex',flexWrap:'wrap',gap:'0.6rem',alignItems:'center',paddingTop:'0.55rem',borderTop:'1px solid #2A2A3A'},
-  }
-
-  if (!pins.length) return (
-    <div style={s.page}>
-      <div style={s.wrap}>
-        <div style={s.hd}>
-          <div><div style={s.title}>📌 My Pinned Contractors</div><div style={s.sub}>Your saved pros</div></div>
-          <button style={s.newBtn} onClick={()=>navigate('home')}>+ New Search</button>
-        </div>
-        <div style={{textAlign:'center',padding:'4rem 1rem'}}>
-          <div style={{fontSize:'2rem',opacity:0.2,marginBottom:'1rem'}}>📌</div>
-          <p style={{color:'#5A5548',fontSize:'0.82rem'}}>No pinned contractors yet.<br/>Search and pin the pros you want to remember.</p>
-        </div>
-      </div>
-    </div>
-  )
-
+export default function Pins({ navigate, pins, onClear, onPin }) {
   return (
-    <div style={s.page}>
-      <div style={s.wrap}>
-        <div style={s.hd}>
-          <div><div style={s.title}>📌 My Pinned Contractors</div><div style={s.sub}>{pins.length} contractor{pins.length>1?'s':''} saved</div></div>
+    <div style={{background:'#08080E',minHeight:'100vh'}}>
+      <div style={{maxWidth:'700px',margin:'0 auto',padding:'1.75rem 1.5rem'}}>
+        <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:'1.5rem',flexWrap:'wrap',gap:'1rem'}}>
+          <div>
+            <div style={{fontFamily:'Playfair Display,serif',fontSize:'1.1rem',color:'#F2EEE6'}}>📌 My Pinned Contractors</div>
+            <div style={{fontSize:'0.75rem',color:'#5A5248',marginTop:'3px'}}>{pins.length} contractor{pins.length!==1?'s':''} pinned</div>
+          </div>
           <div style={{display:'flex',gap:'7px'}}>
-            <button style={s.clearBtn} onClick={onClear}>Clear all</button>
-            <button style={s.newBtn} onClick={()=>navigate('home')}>+ New Search</button>
+            {pins.length > 0 && <button onClick={onClear} style={{background:'none',border:'1px solid #252538',borderRadius:'8px',padding:'0.38rem 0.8rem',fontSize:'0.72rem',color:'#9A8870',cursor:'pointer',fontFamily:'DM Sans,sans-serif'}}>Clear all</button>}
+            <button onClick={()=>navigate('home')} style={{background:'#C9A84C',color:'#08080E',border:'none',borderRadius:'8px',padding:'0.42rem 0.95rem',fontSize:'0.75rem',fontWeight:'700',cursor:'pointer',fontFamily:'DM Sans,sans-serif'}}>+ New Search</button>
           </div>
         </div>
 
-        {Object.keys(grouped).map(svc=>(
-          <div key={svc} style={s.group}>
-            <div style={s.groupHd}>
-              <div style={s.icon}>{ICONS[svc]||'🔧'}</div>
-              <div style={s.groupName}>{svc}</div>
-              <div style={s.count}>{grouped[svc].length} pinned</div>
-            </div>
-            {grouped[svc].map((p,i)=>(
-              <div key={i} style={s.card}>
-                <div style={s.cardTop}>
-                  <div><div style={s.name}>{p.name}</div><div style={s.loc}>{p.loc}</div></div>
-                  <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:'3px'}}>
-                    <div style={s.date}>{p.date}</div>
-                    <div style={s.pill}>📌 Pinned</div>
+        {pins.length === 0 ? (
+          <div style={{textAlign:'center',padding:'5rem 1rem',animation:'fadeIn 0.4s ease'}}>
+            <div style={{fontSize:'2.5rem',opacity:0.15,marginBottom:'1rem'}}>📌</div>
+            <h3 style={{fontFamily:'Playfair Display,serif',fontSize:'1rem',color:'#5A5248',marginBottom:'0.5rem',fontWeight:'700'}}>No pinned contractors yet</h3>
+            <p style={{fontSize:'0.83rem',color:'#3A3A50'}}>Search for a service and pin the pros you want to remember.</p>
+            <button onClick={()=>navigate('home')} style={{marginTop:'1.5rem',background:'#C9A84C',color:'#08080E',border:'none',borderRadius:'9px',padding:'0.65rem 1.5rem',cursor:'pointer',fontFamily:'DM Sans,sans-serif',fontWeight:'700',fontSize:'0.88rem'}}>Start searching →</button>
+          </div>
+        ) : (
+          Object.entries(
+            pins.reduce((acc,p)=>{
+              if(!acc[p.service])acc[p.service]=[]
+              acc[p.service].push(p)
+              return acc
+            },{})
+          ).map(([svc,items])=>(
+            <div key={svc} style={{marginBottom:'2rem',animation:'fadeUp 0.4s ease'}}>
+              <div style={{display:'flex',alignItems:'center',gap:'8px',paddingBottom:'0.65rem',borderBottom:'1px solid #252538',marginBottom:'0.9rem'}}>
+                <div style={{width:'28px',height:'28px',borderRadius:'7px',background:'#181828',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'0.85rem'}}>{ICONS[svc]||'🔧'}</div>
+                <div style={{fontWeight:'700',fontSize:'0.88rem',color:'#F2EEE6'}}>{svc}</div>
+                <div style={{fontSize:'0.7rem',color:'#5A5248',marginLeft:'auto',background:'#181828',padding:'2px 7px',borderRadius:'100px',border:'1px solid #252538'}}>{items.length} pinned</div>
+              </div>
+              {items.map((p,i)=>(
+                <div key={i} style={{background:'#0F0F1A',border:'1px solid #252538',borderRadius:'11px',padding:'1rem 1.2rem',marginBottom:'0.65rem',animation:`slideIn 0.3s ease ${i*0.08}s both`}}>
+                  <div style={{display:'flex',justifyContent:'space-between',gap:'0.75rem',marginBottom:'0.5rem'}}>
+                    <div>
+                      <div style={{fontWeight:'700',fontSize:'0.85rem',color:'#F2EEE6'}}>{p.name}</div>
+                      <div style={{fontSize:'0.72rem',color:'#5A5248'}}>{p.loc}</div>
+                    </div>
+                    <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:'3px',flexShrink:0}}>
+                      <div style={{fontSize:'0.68rem',color:'#5A5248'}}>{p.date}</div>
+                      <div style={{background:'#181828',color:'#C9A84C',fontSize:'0.63rem',fontWeight:'700',padding:'2px 8px',borderRadius:'100px',border:'1px solid #5A4820'}}>📌 Pinned</div>
+                    </div>
+                  </div>
+                  <div style={{fontSize:'0.78rem',color:'#9A8870',lineHeight:'1.55',marginBottom:'0.65rem'}}>{p.desc}</div>
+                  <div style={{display:'flex',flexWrap:'wrap',gap:'0.65rem',alignItems:'center',paddingTop:'0.6rem',borderTop:'1px solid #252538'}}>
+                    <span style={{fontSize:'0.75rem',color:'#9A8870'}}>📞 <a href={`tel:${p.phone}`} style={{color:'#C9A84C',textDecoration:'none',fontWeight:'600'}}>{p.phone}</a></span>
+                    <span style={{fontSize:'0.75rem',color:'#9A8870'}}>✉️ <a href={`mailto:${p.email}`} style={{color:'#C9A84C',textDecoration:'none',fontWeight:'600'}}>{p.email}</a></span>
+                    <span style={{fontSize:'0.72rem',color:'#5A5248',marginLeft:'auto'}}>{p.hours}</span>
                   </div>
                 </div>
-                <div style={s.desc}>{p.desc}</div>
-                <div style={s.footer}>
-                  <span style={{fontSize:'0.73rem',color:'#9A9080'}}>📞 <a href={`tel:${p.phone}`} style={{color:'#C9A84C',textDecoration:'none',fontWeight:'600'}}>{p.phone}</a></span>
-                  <span style={{fontSize:'0.73rem',color:'#9A9080'}}>✉️ <a href={`mailto:${p.email}`} style={{color:'#C9A84C',textDecoration:'none',fontWeight:'600'}}>{p.email}</a></span>
-                  <span style={{fontSize:'0.7rem',color:'#5A5548',marginLeft:'auto'}}>{p.hours}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        ))}
+              ))}
+            </div>
+          ))
+        )}
       </div>
-      <footer style={{background:'#12121A',borderTop:'1px solid #2A2A3A',padding:'1.5rem',textAlign:'center',marginTop:'2rem'}}>
-        <p style={{fontSize:'0.68rem',color:'#5A5548',lineHeight:'1.8',maxWidth:'580px',margin:'0 auto'}}>TrustedPin aggregates publicly available business information for informational purposes only.</p>
+      <footer style={{background:'#0F0F1A',borderTop:'1px solid #252538',padding:'1.5rem',textAlign:'center',marginTop:'2rem'}}>
+        <p style={{fontSize:'0.7rem',color:'#5A5248',lineHeight:'1.8',maxWidth:'580px',margin:'0 auto'}}>TrustedPin aggregates publicly available business information for informational purposes only. trustedpin@outlook.com</p>
       </footer>
     </div>
   )

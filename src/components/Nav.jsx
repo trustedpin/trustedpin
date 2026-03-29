@@ -7,31 +7,44 @@ export default function Nav({ page, navigate, user, pinsCount }) {
   const signOut = async () => {
     await supabase.auth.signOut()
     navigate('home')
+    setMenuOpen(false)
+  }
+
+  const go = (p) => {
+    navigate(p)
+    setMenuOpen(false)
   }
 
   return (
-    <nav style={{background:'#12121A',borderBottom:'1px solid #2A2A3A',padding:'0.85rem 1.25rem',display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:200}}>
-      <div onClick={()=>navigate('home')} style={{display:'flex',alignItems:'center',gap:'9px',cursor:'pointer',flexShrink:0}}>
-        <div style={{width:'24px',height:'24px',background:'#C9A84C',borderRadius:'50% 50% 50% 0',transform:'rotate(-45deg)',display:'flex',alignItems:'center',justifyContent:'center'}}>
-          <div style={{width:'8px',height:'8px',background:'#12121A',borderRadius:'50%',transform:'rotate(45deg)'}}></div>
+    <nav style={{background:'rgba(8,8,14,0.97)',backdropFilter:'blur(12px)',borderBottom:'1px solid #252538',padding:'0.85rem 1.5rem',display:'flex',alignItems:'center',justifyContent:'space-between',position:'sticky',top:0,zIndex:200}}>
+      <div onClick={()=>go('home')} style={{display:'flex',alignItems:'center',gap:'10px',cursor:'pointer',flexShrink:0}}>
+        <div style={{width:'24px',height:'24px',background:'#C9A84C',borderRadius:'50% 50% 50% 0',transform:'rotate(-45deg)',display:'flex',alignItems:'center',justifyContent:'center',animation:'float 3s ease-in-out infinite'}}>
+          <div style={{width:'8px',height:'8px',background:'#0F0F1A',borderRadius:'50%',transform:'rotate(45deg)'}}></div>
         </div>
-        <span style={{fontFamily:'Playfair Display,serif',fontSize:'1.1rem',fontWeight:'700',color:'#C9A84C'}}>Trusted<span style={{color:'#F0EDE6'}}>Pin</span></span>
+        <span style={{fontFamily:'Playfair Display,serif',fontSize:'1.1rem',fontWeight:'700',color:'#C9A84C'}}>Trusted<span style={{color:'#F2EEE6'}}>Pin</span></span>
       </div>
 
-      <div style={{display:'flex',alignItems:'center',gap:'4px'}}>
-        <button onClick={()=>navigate('home')} style={{padding:'0.38rem 0.7rem',borderRadius:'8px',fontSize:'0.76rem',fontWeight:'600',cursor:'pointer',border:'none',background:page==='home'?'#1C1C28':'transparent',color:page==='home'?'#C9A84C':'#9A9080',fontFamily:'DM Sans,sans-serif'}}>Search</button>
+      <div style={{display:'flex',alignItems:'center',gap:'3px'}}>
+        {[
+          {id:'home',label:'Search'},
+          {id:'about',label:'About'},
+          {id:'how',label:'How it Works'},
+          {id:'pro',label:'For Pros'},
+        ].map(t=>(
+          <button key={t.id} onClick={()=>go(t.id)} style={{padding:'0.38rem 0.75rem',borderRadius:'8px',fontSize:'0.77rem',fontWeight:'600',cursor:'pointer',border:'none',background:page===t.id?'#181828':'transparent',color:page===t.id?'#C9A84C':'#9A8870',fontFamily:'DM Sans,sans-serif',transition:'all 0.2s',whiteSpace:'nowrap'}}>{t.label}</button>
+        ))}
 
-        <button onClick={()=>navigate('pins')} style={{position:'relative',padding:'0.38rem 0.7rem',borderRadius:'8px',fontSize:'0.76rem',fontWeight:'600',cursor:'pointer',border:'none',background:page==='pins'?'#1C1C28':'transparent',color:page==='pins'?'#C9A84C':'#9A9080',fontFamily:'DM Sans,sans-serif'}}>
-          📌 Pins
-          {pinsCount > 0 && <span style={{position:'absolute',top:'-4px',right:'-4px',background:'#C9A84C',color:'#0A0A0F',fontSize:'0.55rem',fontWeight:'700',width:'14px',height:'14px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}>{pinsCount}</span>}
+        <button onClick={()=>go('pins')} style={{position:'relative',padding:'0.38rem 0.75rem',borderRadius:'8px',fontSize:'0.77rem',fontWeight:'600',cursor:'pointer',border:'none',background:page==='pins'?'#181828':'transparent',color:page==='pins'?'#C9A84C':'#9A8870',fontFamily:'DM Sans,sans-serif',transition:'all 0.2s'}}>
+          My Pins
+          {pinsCount > 0 && (
+            <span style={{position:'absolute',top:'-4px',right:'-4px',background:'#C9A84C',color:'#08080E',fontSize:'0.58rem',fontWeight:'700',width:'15px',height:'15px',borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center'}}>{pinsCount}</span>
+          )}
         </button>
 
-        <button onClick={()=>navigate('pro')} style={{padding:'0.38rem 0.7rem',borderRadius:'8px',fontSize:'0.76rem',fontWeight:'600',cursor:'pointer',border:'none',background:page==='pro'?'#1C1C28':'transparent',color:page==='pro'?'#C9A84C':'#9A9080',fontFamily:'DM Sans,sans-serif',whiteSpace:'nowrap'}}>For Pros</button>
-
         {user ? (
-          <button onClick={signOut} style={{padding:'0.38rem 0.7rem',borderRadius:'8px',fontSize:'0.76rem',fontWeight:'600',cursor:'pointer',border:'1px solid #2A2A3A',background:'transparent',color:'#9A9080',fontFamily:'DM Sans,sans-serif'}}>Sign Out</button>
+          <button onClick={signOut} style={{padding:'0.38rem 0.75rem',borderRadius:'8px',fontSize:'0.77rem',fontWeight:'600',cursor:'pointer',border:'1px solid #252538',background:'transparent',color:'#9A8870',fontFamily:'DM Sans,sans-serif',marginLeft:'4px'}}>Sign Out</button>
         ) : (
-          <button onClick={()=>navigate('auth')} style={{padding:'0.38rem 0.85rem',borderRadius:'8px',fontSize:'0.76rem',fontWeight:'700',cursor:'pointer',border:'none',background:'#C9A84C',color:'#0A0A0F',fontFamily:'DM Sans,sans-serif'}}>Sign In</button>
+          <button onClick={()=>go('auth')} style={{padding:'0.38rem 1rem',borderRadius:'8px',fontSize:'0.77rem',fontWeight:'700',cursor:'pointer',border:'none',background:'#C9A84C',color:'#08080E',fontFamily:'DM Sans,sans-serif',marginLeft:'4px',transition:'background 0.2s'}}>Sign In</button>
         )}
       </div>
     </nav>
