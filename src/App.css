@@ -12,3 +12,21 @@ body {
 button { cursor: pointer; }
 a { color: #C9A84C; }
 input, select, textarea { color: #F0EDE6; }
+::placeholder {
+  color: #6A6A7A;
+  opacity: 1;
+}
+
+select option {
+  background: #1C1C28;
+  color: #F0EDE6;
+}
+
+p, li, div {
+  color: inherit;
+}
+
+.muted-text {
+  color: #B0A090;
+}
+```
