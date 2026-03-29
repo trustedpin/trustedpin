@@ -1,21 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Mulish:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap');
 
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
 body {
-  font-family: 'Mulish', sans-serif;
-  background: #F8FAFC;
-  color: #0F172A;
+  font-family: 'DM Sans', sans-serif;
+  background: #0A0A0F;
+  color: #F0EDE6;
+  min-height: 100vh;
 }
 
-button {
-  cursor: pointer;
-}
-
-a {
-  color: #2563EB;
-}
+button { cursor: pointer; }
+a { color: #C9A84C; }
+input, select, textarea { color: #F0EDE6; }
